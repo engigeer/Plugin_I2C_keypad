@@ -856,7 +856,7 @@ static void onStateChanged (sys_state_t state)
         on_state_change(state);    
 }
 
-static void keypad_poll (void)
+static void keypad_poll (void *data)
 {
     static uint32_t last_ms;
 
@@ -877,8 +877,12 @@ static void keypad_poll (void)
         send_status_info();
         last_ms = ms;
     }
+
+    //task_delete(keypad_poll, NULL);
+    task_add_delayed(keypad_poll, NULL, 50);
 }
 
+#if 0
 static void keypad_poll_realtime (sys_state_t grbl_state)
 {
     on_execute_realtime(grbl_state);
@@ -892,6 +896,7 @@ static void keypad_poll_delay (sys_state_t grbl_state)
 
     keypad_poll();
 }
+#endif
 
 static void jogmode_changed (jogmode_t jogMode)
 {
@@ -924,11 +929,15 @@ bool keypad_init (void)
         on_report_options = grbl.on_report_options;
         grbl.on_report_options = onReportOptions;
 
+#if 0
         on_execute_realtime = grbl.on_execute_realtime;
         grbl.on_execute_realtime = keypad_poll_realtime;
 
         on_execute_delay = grbl.on_execute_delay;
         grbl.on_execute_delay = keypad_poll_delay;
+#endif
+
+        task_add_delayed(keypad_poll, NULL, 1000);
 
         settings_register(&keypad_setting_details); 
         settings_register(&macro_setting_details);     
