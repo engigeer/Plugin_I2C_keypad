@@ -878,7 +878,7 @@ static void keypad_poll (void *data)
         last_ms = ms;
     }
 
-    //task_delete(keypad_poll, NULL);
+    task_delete(keypad_poll, NULL);
     task_add_delayed(keypad_poll, NULL, 50);
 }
 
