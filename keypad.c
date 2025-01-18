@@ -862,6 +862,9 @@ static void keypad_poll (void *data)
 
     uint32_t ms = hal.get_elapsed_ticks();
 
+    task_delete(keypad_poll, NULL);
+    task_add_delayed(keypad_poll, NULL, 50);    
+
     //check more often during manual jogging
     if (state_get() == STATE_JOG){
         if(ms < last_ms + SEND_STATUS_JOG_DELAY)
@@ -877,9 +880,6 @@ static void keypad_poll (void *data)
         send_status_info();
         last_ms = ms;
     }
-
-    task_delete(keypad_poll, NULL);
-    task_add_delayed(keypad_poll, NULL, 50);
 }
 
 #if 0
