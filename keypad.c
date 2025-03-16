@@ -247,7 +247,7 @@ static void keypad_process_keypress (void *data)
 
          // Feed rate and spindle overrides
 
-             case 'I':                                   // Feed rate coarse override -10%
+            case 'I':                                   // Feed rate coarse override -10%
                 enqueue_feed_override(CMD_OVERRIDE_FEED_RESET);
                 break;
 
@@ -271,7 +271,7 @@ static void keypad_process_keypress (void *data)
                 enqueue_spindle_override(CMD_OVERRIDE_SPINDLE_COARSE_MINUS);
                 break;
 
-         // Pass most of the top bit set commands trough unmodified
+         // Pass most of the top bit set commands through unmodified
 
             case CMD_OVERRIDE_FEED_RESET:
             case CMD_OVERRIDE_FEED_COARSE_PLUS:
@@ -422,7 +422,7 @@ static void onReportOptions (bool newopt)
     on_report_options(newopt);
 
     if(!newopt)
-        report_plugin("Keypad", "1.39");
+        report_plugin("Keypad", "1.40");
 }
 
 #if KEYPAD_ENABLE == 1

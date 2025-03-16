@@ -60,8 +60,8 @@ static on_keypress_preview_ptr on_keypress_preview;
 static on_jogdata_changed_ptr on_jogdata_changed;
 #endif
 
-#define SEND_STATUS_DELAY 300
-#define SEND_STATUS_JOG_DELAY 100
+#define SEND_STATUS_DELAY 50
+#define SEND_STATUS_JOG_DELAY 50
 #define SEND_STATUS_NOW_DELAY 20
 
 static machine_status_packet_t status_packet, prev_status = {0};
@@ -97,7 +97,7 @@ static void send_status_info (void)
 
     status_packet.feed_rate = st_get_realtime_rate();
 
-    if(msgtype || memcmp(&prev_status, &status_packet, offsetof(machine_status_packet_t, msgtype))) {
+    if(true) {//msgtype || memcmp(&prev_status, &status_packet, offsetof(machine_status_packet_t, msgtype))) {
 
         size_t len = (status_packet.msgtype = msgtype) ? offsetof(machine_status_packet_t, msg) : offsetof(machine_status_packet_t, msgtype);
 
@@ -186,8 +186,8 @@ static void display_update (void *data)
 
 static void display_update_now (void)
 {
-    task_delete(display_update, NULL);
-    task_add_delayed(display_update, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
+//    task_delete(display_update, NULL);
+//    task_add_delayed(display_update, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
 }
 
 static void onStateChanged (sys_state_t state)
