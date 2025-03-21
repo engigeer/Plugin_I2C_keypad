@@ -60,8 +60,8 @@ static on_keypress_preview_ptr on_keypress_preview;
 static on_jogdata_changed_ptr on_jogdata_changed;
 #endif
 
-#define SEND_STATUS_DELAY     300
-#define SEND_STATUS_JOG_DELAY 100
+#define SEND_STATUS_DELAY     50
+#define SEND_STATUS_JOG_DELAY 50
 #define SEND_STATUS_NOW_DELAY 20
 
 static machine_status_packet_t status_packet, prev_status = {0};
@@ -181,7 +181,7 @@ static void set_state (sys_state_t state)
 
 static void display_update_now (void)
 {
-    if(status_packet.address) {
+    if(false) {//status_packet.address) {
         task_delete(send_status_info, NULL);
         task_add_delayed(send_status_info, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
     }
