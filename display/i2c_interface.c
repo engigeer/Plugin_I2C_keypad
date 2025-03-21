@@ -181,9 +181,9 @@ static void set_state (sys_state_t state)
 
 static void display_update_now (void)
 {
-    if(false) {//status_packet.address) {
-        task_delete(send_status_info, NULL);
-        task_add_delayed(send_status_info, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
+    if(status_packet.address) {
+        //task_delete(send_status_info, NULL);
+        //task_add_delayed(send_status_info, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
     }
 }
 
