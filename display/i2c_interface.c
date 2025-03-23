@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "i2c_interface.h"
 
@@ -97,7 +98,7 @@ static void send_status_info (void *data)
 
     status_packet.feed_rate = st_get_realtime_rate();
 
-    if(msgtype || memcmp(&prev_status, &status_packet, offsetof(machine_status_packet_t, msgtype))) {
+    if(true) {//msgtype || memcmp(&prev_status, &status_packet, offsetof(machine_status_packet_t, msgtype))) {
 
         size_t len = ((status_packet.msgtype = msgtype)) ? offsetof(machine_status_packet_t, msg) : offsetof(machine_status_packet_t, msgtype);
 
@@ -438,7 +439,7 @@ void display_init (void)
 
         status_packet.address = 0;
     #if N_AXIS == 3
-        status_packet.coordinate.a = 0xFFFFFFFF; // TODO: should be changed to NAN
+        status_packet.coordinate.a = NAN; // TODO: should be changed to NAN
     #endif
 
         // delay final setup until startup is complete
