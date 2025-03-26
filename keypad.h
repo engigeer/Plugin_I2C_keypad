@@ -30,11 +30,11 @@
 #include "grbl/settings.h"
 #endif
 
-#if N_AXIS > 3
-#define N_MACROS 5
-#else
+//#if N_AXIS > 3
+//#define N_MACROS 5
+//#else
 #define N_MACROS 7
-#endif
+//#endif
 
 #define KEYBUF_SIZE 8 // must be a power of 2
 #define KEYPAD_I2CADDR 0x49

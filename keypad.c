@@ -707,14 +707,14 @@ static void keypad_process_keypress (sys_state_t state)
                 jog_command(command, "X-?Z-?F");
                 break;
 #if N_AXIS > 3
-             case MACRORAISE:                           //  Jog +A
+             case 'A':                           //  Jog +A
                 jog_command(command, "A?F");
                 break;
 
-             case MACROLOWER:                           // Jog -A
+             case 'a':                           // Jog -A
                 jog_command(command, "A-?F");
                 break; 
-#else
+#endif//#else
              case MACRORAISE:                           //  Macro 5
                 execute_macro(5); 
                 break;
@@ -722,7 +722,7 @@ static void keypad_process_keypress (sys_state_t state)
              case MACROLOWER:                           // Macro 6
                 execute_macro(6); 
                 break; 
-#endif                
+//#endif                
 
         }
 
