@@ -369,8 +369,10 @@ static bool keypress_preview (const char c, uint_fast16_t state)
 
     if(macro != -1) {
         command = plugin_settings.macro[macro].data;
-        if(!(*command == '\0' || *command == IOPORT_UNASSIGNED)) // If valid command
+        if(!(*command == '\0' || *command == IOPORT_UNASSIGNED)){ // If valid command
+            macro_id = 1;
             run_macro(NULL);                        // run macro.
+        }
     }
 
     return macro != -1 || (on_keypress_preview && on_keypress_preview(c, state));
