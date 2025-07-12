@@ -27,6 +27,7 @@
 #include "../keypad.h"
 #endif
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -64,7 +65,7 @@ static on_jogdata_changed_ptr on_jogdata_changed;
 #define SEND_STATUS_JOG_DELAY 100
 #define SEND_STATUS_NOW_DELAY 20
 
-static machine_status_packet_t status_packet, prev_status = {0};
+static machine_status_packet_t status_packet, prev_status = {};
 
 static void send_status_info (void *data)
 {
@@ -133,55 +134,28 @@ static void send_status_info (void *data)
 
 static void set_state (sys_state_t state)
 {
+    status_packet.machine_state = ffs(state);
     status_packet.machine_substate = state_get_substate();
 
-    switch (state) {
-        case STATE_ESTOP:
-        case STATE_ALARM:
-            {
-                status_packet.machine_state = MachineState_Alarm;
+    if(state & (STATE_ESTOP|STATE_ALARM)) {
+        char *alarm;
 
-                char *alarm;
-                if((alarm = (char *)alarms_get_description((alarm_code_t)status_packet.machine_substate))) {
-                    strncpy((char *)status_packet.msg, alarm, sizeof(status_packet.msg) - 1);
-                    if((alarm = strchr((char *)status_packet.msg, '.')))
-                        *(++alarm) = '\0';
-                    else
-                        status_packet.msg[sizeof(status_packet.msg) - 1] = '\0';
-                    msgtype = (msg_type_t)strlen((char *)status_packet.msg);
-                }
-            }
-            break;
-//        case STATE_ESTOP:
-//            status_packet.machine_state = MachineState_EStop;
-//            break;
-        case STATE_CYCLE:
-            status_packet.machine_state = MachineState_Cycle;
-            break;
-        case STATE_HOLD:
-            status_packet.machine_state = MachineState_Hold;
-            break;
-        case STATE_TOOL_CHANGE:
-            status_packet.machine_state = MachineState_ToolChange;
-            break;
-        case STATE_IDLE:
-            status_packet.machine_state = MachineState_Idle;
-            break;
-        case STATE_HOMING:
-            status_packet.machine_state = MachineState_Homing;
-            break;
-        case STATE_JOG:
-            status_packet.machine_state = MachineState_Jog;
-            break;
-        default:
-            status_packet.machine_state = MachineState_Other;
-            break;
+        status_packet.machine_state = SystemState_Alarm;
+
+        if((alarm = (char *)alarms_get_description((alarm_code_t)status_packet.machine_substate))) {
+            strncpy((char *)status_packet.msg, alarm, sizeof(status_packet.msg) - 1);
+            if((alarm = strchr((char *)status_packet.msg, '.')))
+                *(++alarm) = '\0';
+            else
+                status_packet.msg[sizeof(status_packet.msg) - 1] = '\0';
+            msgtype = (msg_type_t)strlen((char *)status_packet.msg);
+        }
     }
 }
 
 static void display_update_now (void)
 {
-    if(status_packet.address) {
+    if(status_packet.version) {
         task_delete(send_status_info, NULL);
         task_add_delayed(send_status_info, NULL, SEND_STATUS_NOW_DELAY); // wait a bit before updating in order not to spam the port
     }
@@ -406,7 +380,7 @@ static void complete_setup (void *data)
     set_state(state_get());
     add_reports(report);
 
-    status_packet.address = 0x01;
+    status_packet.version = 2;
     status_packet.msgtype = MachineMsg_None;
     status_packet.status_code = Status_OK;
     status_packet.machine_modes.mode = settings.mode;
@@ -438,10 +412,10 @@ void display_init (void)
         on_rt_reports_added = grbl.on_rt_reports_added;
         grbl.on_rt_reports_added = onRealtimeReportsAdded;
 
-        status_packet.address = 0;
-    #if N_AXIS == 3
-        status_packet.coordinate.a = 0xFFFFFFFF; // TODO: should be changed to NAN
-    #endif
+        status_packet.version = 0;
+#if N_AXIS == 3
+        status_packet.coordinate.a = NAN;
+#endif
 
         // delay final setup until startup is complete
         task_run_on_startup(complete_setup, NULL);

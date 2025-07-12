@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "grbl/gcode.h"
+#include "driver.h"
 
 #include <assert.h>
 
@@ -29,30 +29,16 @@
 #define static_assert _Static_assert
 #endif
 
-typedef uint8_t msg_type_t;
-typedef uint8_t machine_state_t;
-
-enum msg_type_t {
+typedef enum {
     MachineMsg_None = 0,
 // 1-127 reserved for message string length
     MachineMsg_Overrides = 253,
     MachineMsg_WorkOffset = 254,
     MachineMsg_ClearMessage = 255,
-};
-
-enum machine_state_t {
-    MachineState_Alarm = 1,
-    MachineState_Cycle = 2,
-    MachineState_Hold = 3,
-    MachineState_ToolChange = 4,
-    MachineState_Idle = 5,
-    MachineState_Homing = 6,
-    MachineState_Jog = 7,
-    MachineState_Other = 254
-};
+} __attribute__ ((__packed__)) msg_type_t;
 
 static_assert(sizeof(msg_type_t) == 1, "msg_type_t too large for I2C display interface");
-static_assert(sizeof(machine_state_t) == 1, "machine_state_t too large for I2C display interface");
+static_assert(sizeof(system_state_t) == 1, "machine_state_t too large for I2C display interface");
 static_assert(sizeof(coord_system_id_t) == 1, "coord_system_id_t too large for I2C display interface");
 
 typedef union {
@@ -85,8 +71,8 @@ typedef union {
 } machine_coords_t;
 
 typedef struct {
-    uint8_t address;
-    machine_state_t machine_state;
+    uint8_t version;
+    system_state_t machine_state;
     uint8_t machine_substate;
     axes_signals_t home_state;
     uint8_t feed_override; // size changed in latest version!
