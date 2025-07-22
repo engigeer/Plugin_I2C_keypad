@@ -63,7 +63,7 @@ static on_jogdata_changed_ptr on_jogdata_changed;
 
 #define SEND_STATUS_DELAY     300
 #define SEND_STATUS_JOG_DELAY 100
-#define SEND_STATUS_NOW_DELAY 20
+#define SEND_STATUS_NOW_DELAY 40
 
 static machine_status_packet_t status_packet, prev_status = {};
 
