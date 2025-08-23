@@ -651,10 +651,10 @@ static bool macro_settings_iterator (const setting_detail_t *setting, setting_ou
 
 static setting_id_t macro_settings_normalize (setting_id_t id)
 {
-    return (id > Setting_MacroBase && id < Setting_MacroBase + N_MACROS) ||
+    return (id > Setting_MacroBase && id < Setting_MacroBase + N_MACROS)
 #if MACROS_ENABLE & 0x01
-            (id > Setting_MacroPortBase && id < Setting_MacroPortBase + N_MACROS) ||
-             (id > Setting_ButtonActionBase && id < Setting_ButtonActionBase + N_MACROS)
+             || (id > Setting_MacroPortBase && id < Setting_MacroPortBase + N_MACROS)
+             || (id > Setting_ButtonActionBase && id < Setting_ButtonActionBase + N_MACROS)
 #endif
               ? (setting_id_t)(id - (id % 10))
               : id;
